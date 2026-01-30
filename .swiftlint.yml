@@ -1,0 +1,53 @@
+included:
+  - inari
+
+excluded:
+  - Pods
+  - inari/Resources
+  - inari.xcodeproj
+  - inariTests
+  - inariUITests
+
+opt_in_rules:
+  - explicit_init
+  - closure_spacing
+  - contains_over_first_not_nil
+  - empty_count
+  - sorted_imports
+
+disabled_rules:
+  - trailing_whitespace
+
+line_length:
+  warning: 120
+  error: 140
+  ignores_comments: true
+
+file_length:
+  warning: 400
+  error: 600
+
+type_body_length:
+  warning: 300
+  error: 500
+
+function_body_length:
+  warning: 50
+  error: 100
+
+identifier_name:
+  min_length:
+    warning: 2
+  max_length:
+    warning: 50
+  excluded:
+    - id
+    - vm
+    - db
+
+custom_rules:
+  view_model_suffix:
+    name: "ViewModel Naming"
+    regex: 'class\s+\w+(?<!ViewModel):\s*.*ViewModel'
+    message: "ViewModels should have 'ViewModel' suffix"
+    severity: warning
