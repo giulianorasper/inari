@@ -154,7 +154,62 @@ See `.claude/rules/conventions.md` for complete conventions.
 
 ## Data Models
 
-> To be documented after Task 02: Data Models
+### Location
+All models are in `Core/Models/` as value types (structs).
+
+### Core Models
+- **Wallet** (`Wallet.swift`) - Budget container (single or two-user)
+  - WalletType enum: `.single` or `.twoUser`
+  - Immutable: currency, type
+  - Burden ratio: 0.0-1.0 (default 0.5 for two-user)
+
+- **Transaction** (`Transaction.swift`) - Financial transaction with type enum
+  - Amount uses `Decimal` (never Double/Float)
+  - TransactionKind enum with 4 types (see below)
+  - Optional custom burden ratio for shared expenses
+
+- **Category** (`Category.swift`) - Expense classification
+  - CategoryColor enum: 11 predefined colors
+  - SF Symbol icon name for UI
+  - isShared flag for two-user wallets
+
+- **Budget** (`Budget.swift`) - Monthly spending limits
+  - BudgetPeriod struct (year/month)
+  - Limit uses `Decimal`
+
+### Supporting Types
+- **CurrencyCode** (`Shared/CurrencyCode.swift`) - ISO 4217 codes (USD, EUR, GBP, etc.)
+- **TransactionKind** (`TransactionKind.swift`) - Enum with associated values:
+  - `.oneTime` - Single occurrence
+  - `.recurring(RecurringProperties)` - Repeating schedule
+  - `.spreadOut(SpreadOutProperties)` - Amount distributed over time
+  - `.expectation(ExpectationProperties)` - Estimated with reconciliation
+
+### Protocol Conformance
+All models conform to: `Identifiable, Codable, Hashable, Sendable`
+
+### Relationships
+```
+Wallet ─┬─> Categories (1:N via Category.walletID)
+        └─> Transactions (1:N via Transaction.walletID)
+            └─> Category (N:1 via Transaction.categoryID)
+
+Category ─> Budgets (1:N via Budget.categoryID)
+```
+
+### Currency Handling
+- All amounts use `Decimal` (never Double/Float for precision)
+- ISO 4217 currency codes: USD, EUR, GBP, etc.
+- Encode as Double for Codable, convert to NSDecimalNumber for CloudKit
+
+### Sample Data
+All models include sample data extensions for previews and testing:
+```swift
+Wallet.sampleSingle
+Category.samples
+Transaction.sampleOneTime
+Budget.sample
+```
 
 ## CloudKit
 
